@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createClient as createSupabaseAdmin } from "@supabase/supabase-js";
 
 // n8n calls this endpoint when research is complete (or failed).
 // POST body: { prospect_id, summary, raw_data?, status? }
@@ -13,7 +13,11 @@ export async function POST(request: Request) {
     }
   }
 
-  const supabase = await createClient();
+  // Use service role key to bypass RLS — this is a trusted server-to-server call from n8n.
+  const supabase = createSupabaseAdmin(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
 
   const body = await request.json();
   const { prospect_id, summary, raw_data, status = "completed" } = body;
