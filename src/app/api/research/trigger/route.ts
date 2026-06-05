@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
-const MOCK_SUMMARY = `Research Summary
-completed
-## Company Overview
+const MOCK_SUMMARY = `## Company Overview
 
 *   **Business Description:** KPMG in Singapore is a member firm of the global KPMG network of independent professional services firms. It provides high-value professional services to local and international clients.
 *   **Industry Vertical:** Business Consulting, Professional Services, and Capital Markets.

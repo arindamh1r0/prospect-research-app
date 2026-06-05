@@ -6,11 +6,12 @@ import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
+import { LayoutDashboard, Users, PlusCircle, LogOut, Zap } from "lucide-react";
 
 const navItems = [
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/prospects", label: "Prospects" },
-  { href: "/prospects/new", label: "+ New Prospect" },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/prospects", label: "Prospects", icon: Users },
+  { href: "/prospects/new", label: "New Research", icon: PlusCircle },
 ];
 
 export function Sidebar() {
@@ -25,33 +26,44 @@ export function Sidebar() {
   }
 
   return (
-    <aside className="w-60 min-h-screen flex flex-col border-r bg-muted/40 p-4">
-      <div className="mb-6">
-        <h1 className="text-lg font-semibold tracking-tight">ProspectAI</h1>
-        <p className="text-xs text-muted-foreground">Sales Research Platform</p>
+    <aside className="w-60 min-h-screen flex flex-col border-r bg-muted/40 p-4 shrink-0">
+      <div className="mb-6 flex items-center gap-2">
+        <div className="flex items-center justify-center rounded-lg size-8 bg-primary text-primary-foreground">
+          <Zap className="size-4" />
+        </div>
+        <div>
+          <h1 className="text-sm font-semibold tracking-tight leading-none">ProspectAI</h1>
+          <p className="text-xs text-muted-foreground mt-0.5">Sales Research</p>
+        </div>
       </div>
       <Separator className="mb-4" />
-      <nav className="flex flex-col gap-1 flex-1">
-        {navItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={cn(
-              "rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground",
-              pathname === item.href
-                ? "bg-accent text-accent-foreground"
-                : "text-muted-foreground"
-            )}
-          >
-            {item.label}
-          </Link>
-        ))}
+      <nav className="flex flex-col gap-0.5 flex-1">
+        {navItems.map((item) => {
+          const Icon = item.icon;
+          const active = pathname === item.href;
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "flex items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground",
+                active
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground"
+              )}
+            >
+              <Icon className="size-4 shrink-0" />
+              {item.label}
+            </Link>
+          );
+        })}
       </nav>
       <Separator className="my-4" />
       <button
         onClick={handleSignOut}
-        className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground text-left"
+        className="flex items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground text-left"
       >
+        <LogOut className="size-4 shrink-0" />
         Sign out
       </button>
     </aside>
