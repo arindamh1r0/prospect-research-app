@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { listContacts, createContact } from "@/lib/contacts";
+import { getLatestEmailPerContact } from "@/lib/outreach";
 
 export async function GET(request: NextRequest) {
   const supabase = await createClient();
@@ -12,7 +13,12 @@ export async function GET(request: NextRequest) {
   const tag = searchParams.get("tag") ?? undefined;
 
   try {
-    const data = await listContacts(user.id, search, tag);
+    const contacts = await listContacts(user.id, search, tag);
+    const latestEmails = await getLatestEmailPerContact(user.id, contacts.map((c) => c.id));
+    const data = contacts.map((c) => ({
+      ...c,
+      last_outreach: latestEmails.get(c.id) ?? null,
+    }));
     return NextResponse.json({ data, error: null });
   } catch (err) {
     return NextResponse.json({ data: null, error: (err as Error).message }, { status: 500 });

@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getContact } from "@/lib/contacts";
 import { getUserSettings } from "@/lib/settings";
-import type { DraftEmailResponse, EmailTone } from "@/types/contact";
+import { saveOutreachEmail } from "@/lib/outreach";
+import type { EmailTone } from "@/types/contact";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -86,11 +87,15 @@ export async function POST(request: NextRequest, { params }: Params) {
   const json = await response.json();
   const raw: string = json.choices?.[0]?.message?.content ?? "";
 
-  // Parse "Subject: ..." line and body
   const subjectMatch = raw.match(/^Subject:\s*(.+)$/m);
   const subject = subjectMatch?.[1]?.trim() ?? "Outreach from ProspectAI";
   const emailBody = raw.replace(/^Subject:.*$/m, "").trim();
 
-  const data: DraftEmailResponse = { subject, body: emailBody };
-  return NextResponse.json({ data, error: null });
+  // Auto-save to outreach_emails with status = 'drafted'
+  const saved = await saveOutreachEmail(
+    { contact_id: id, subject, body: emailBody, tone, status: "drafted" },
+    user.id
+  );
+
+  return NextResponse.json({ data: { ...saved, subject, body: emailBody }, error: null });
 }

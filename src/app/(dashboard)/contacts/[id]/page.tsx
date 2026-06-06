@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getContact } from "@/lib/contacts";
 import { Header } from "@/components/layout/header";
 import { DraftEmailButton } from "@/components/contacts/draft-email-button";
+import { OutreachHistory } from "@/components/outreach/outreach-history";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Pencil, ArrowLeft, Globe, Link2, Phone, MapPin, Building2, Briefcase, Mail } from "lucide-react";
@@ -89,6 +90,11 @@ export default async function ContactProfilePage({ params }: Props) {
             <> · Updated {new Date(contact.updated_at).toLocaleDateString(undefined, { dateStyle: "medium" })}</>
           )}
         </p>
+
+        {/* Outreach History */}
+        <div className="rounded-xl border bg-card p-5">
+          <OutreachHistory contact={contact} />
+        </div>
       </main>
     </>
   );

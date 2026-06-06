@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useState } from "react";
 import type { Contact } from "@/lib/types/database.types";
+import type { OutreachStatus } from "@/types/outreach";
+import { StatusBadge } from "@/components/outreach/status-badge";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
@@ -11,8 +13,17 @@ import { Button } from "@/components/ui/button";
 import { EmailDraftModal } from "@/components/contacts/email-draft-modal";
 import { Pencil, Trash2, Mail, Eye } from "lucide-react";
 
+export interface ContactWithOutreach extends Contact {
+  last_outreach?: {
+    contact_id: string;
+    status: string;
+    subject: string;
+    updated_at: string;
+  } | null;
+}
+
 interface ContactTableProps {
-  contacts: Contact[];
+  contacts: ContactWithOutreach[];
   onDelete?: (id: string) => void;
 }
 
@@ -52,6 +63,7 @@ export function ContactTable({ contacts, onDelete }: ContactTableProps) {
             <TableHead>Title</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Tags</TableHead>
+            <TableHead>Last Outreach</TableHead>
             <TableHead>Added</TableHead>
             <TableHead />
           </TableRow>
@@ -72,6 +84,18 @@ export function ContactTable({ contacts, onDelete }: ContactTableProps) {
                     <Badge variant="outline" className="text-xs">+{c.tags.length - 3}</Badge>
                   )}
                 </div>
+              </TableCell>
+              <TableCell>
+                {c.last_outreach ? (
+                  <div className="space-y-0.5">
+                    <StatusBadge status={c.last_outreach.status as OutreachStatus} />
+                    <p className="text-xs text-muted-foreground">
+                      {new Date(c.last_outreach.updated_at).toLocaleDateString()}
+                    </p>
+                  </div>
+                ) : (
+                  <span className="text-muted-foreground text-xs">—</span>
+                )}
               </TableCell>
               <TableCell className="text-muted-foreground text-xs">
                 {new Date(c.created_at).toLocaleDateString()}

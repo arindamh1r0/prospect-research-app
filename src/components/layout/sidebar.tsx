@@ -6,13 +6,14 @@ import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
-import { LayoutDashboard, Users, PlusCircle, LogOut, Zap, BookUser, Settings } from "lucide-react";
+import { LayoutDashboard, Users, PlusCircle, LogOut, Zap, BookUser, Settings, SendHorizonal } from "lucide-react";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/prospects", label: "Research", icon: Users },
   { href: "/prospects/new", label: "New Research", icon: PlusCircle },
   { href: "/contacts", label: "Contacts", icon: BookUser },
+  { href: "/outreach", label: "Outreach", icon: SendHorizonal },
 ];
 
 export function Sidebar() {

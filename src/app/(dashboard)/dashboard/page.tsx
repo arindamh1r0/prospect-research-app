@@ -14,15 +14,15 @@ import Link from "next/link";
 import {
   Building2,
   CheckCircle2,
-  Clock,
-  TrendingUp,
   Search,
   FileText,
   BookUser,
   BarChart3,
   RefreshCw,
+  TrendingUp,
   ArrowRight,
   Zap,
+  SendHorizonal,
 } from "lucide-react";
 
 export default async function DashboardPage() {
@@ -31,31 +31,17 @@ export default async function DashboardPage() {
   const [
     { count: prospectCount },
     { count: completedCount },
-    { count: pendingCount },
-    { count: failedCount },
     { count: contactCount },
+    { count: emailCount },
   ] = await Promise.all([
     supabase.from("prospects").select("*", { count: "exact", head: true }),
     supabase
       .from("research_results")
       .select("*", { count: "exact", head: true })
       .eq("status", "completed"),
-    supabase
-      .from("research_results")
-      .select("*", { count: "exact", head: true })
-      .in("status", ["pending", "processing"]),
-    supabase
-      .from("research_results")
-      .select("*", { count: "exact", head: true })
-      .eq("status", "failed"),
     supabase.from("contacts").select("*", { count: "exact", head: true }),
+    supabase.from("outreach_emails").select("*", { count: "exact", head: true }),
   ]);
-
-  const totalResearch = (completedCount ?? 0) + (failedCount ?? 0);
-  const successRate =
-    totalResearch > 0
-      ? `${Math.round(((completedCount ?? 0) / totalResearch) * 100)}%`
-      : "—";
 
   const stats = [
     {
@@ -73,25 +59,18 @@ export default async function DashboardPage() {
       bgClass: "bg-emerald-500/10",
     },
     {
-      label: "In Queue",
-      value: pendingCount ?? 0,
-      icon: Clock,
-      iconClass: "text-amber-500",
-      bgClass: "bg-amber-500/10",
-    },
-    {
-      label: "Success Rate",
-      value: successRate,
-      icon: TrendingUp,
-      iconClass: "text-violet-500",
-      bgClass: "bg-violet-500/10",
-    },
-    {
       label: "Saved Contacts",
       value: contactCount ?? 0,
       icon: BookUser,
       iconClass: "text-pink-500",
       bgClass: "bg-pink-500/10",
+    },
+    {
+      label: "Outreach Emails",
+      value: emailCount ?? 0,
+      icon: SendHorizonal,
+      iconClass: "text-orange-500",
+      bgClass: "bg-orange-500/10",
     },
   ];
 
@@ -131,7 +110,7 @@ export default async function DashboardPage() {
           <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
             Overview
           </p>
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {stats.map((stat) => (
               <Card key={stat.label} size="sm">
                 <CardHeader className="pb-0">
@@ -243,6 +222,35 @@ export default async function DashboardPage() {
               </CardFooter>
             </Card>
 
+            {/* Active: Email Outreach */}
+            <Card className="transition-all hover:ring-2 hover:ring-ring/40">
+              <CardHeader className="gap-2">
+                <div className="flex items-start justify-between">
+                  <div className="inline-flex items-center justify-center rounded-lg size-10 bg-orange-500/10">
+                    <SendHorizonal className="size-5 text-orange-500" />
+                  </div>
+                  <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-0 font-medium">
+                    Active
+                  </Badge>
+                </div>
+                <CardTitle>Email Outreach</CardTitle>
+                <CardDescription>
+                  Track AI-drafted outreach emails, update pipeline status from
+                  drafted to sent to replied, all in one view.
+                </CardDescription>
+              </CardHeader>
+              <CardFooter>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  render={<Link href="/outreach" />}
+                >
+                  View Outreach
+                  <ArrowRight className="size-3.5" />
+                </Button>
+              </CardFooter>
+            </Card>
+
             {/* Coming soon feature cards */}
             {comingSoonFeatures.map((feature) => (
               <Card key={feature.title} className="opacity-60">
@@ -279,6 +287,10 @@ export default async function DashboardPage() {
           <Button variant="outline" render={<Link href="/contacts" />}>
             <BookUser className="size-4" />
             View Contacts
+          </Button>
+          <Button variant="outline" render={<Link href="/outreach" />}>
+            <SendHorizonal className="size-4" />
+            View Outreach
           </Button>
         </section>
       </main>

@@ -9,6 +9,61 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      outreach_emails: {
+        Row: {
+          id: string;
+          user_id: string;
+          contact_id: string;
+          subject: string;
+          body: string;
+          tone: "formal" | "casual" | "direct" | null;
+          status: "drafted" | "sent" | "replied" | "meeting_booked" | "no_response";
+          sent_at: string | null;
+          replied_at: string | null;
+          outcome_notes: string | null;
+          gmail_message_id: string | null;
+          gmail_thread_id: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          contact_id: string;
+          subject: string;
+          body: string;
+          tone?: "formal" | "casual" | "direct" | null;
+          status?: "drafted" | "sent" | "replied" | "meeting_booked" | "no_response";
+          sent_at?: string | null;
+          replied_at?: string | null;
+          outcome_notes?: string | null;
+          gmail_message_id?: string | null;
+          gmail_thread_id?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          subject?: string;
+          body?: string;
+          tone?: "formal" | "casual" | "direct" | null;
+          status?: "drafted" | "sent" | "replied" | "meeting_booked" | "no_response";
+          sent_at?: string | null;
+          replied_at?: string | null;
+          outcome_notes?: string | null;
+          gmail_message_id?: string | null;
+          gmail_thread_id?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "outreach_emails_contact_id_fkey";
+            columns: ["contact_id"];
+            isOneToOne: false;
+            referencedRelation: "contacts";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
       user_settings: {
         Row: {
           user_id: string;
@@ -160,6 +215,8 @@ export type Prospect = Database["public"]["Tables"]["prospects"]["Row"];
 export type ProspectInsert = Database["public"]["Tables"]["prospects"]["Insert"];
 export type ResearchResult = Database["public"]["Tables"]["research_results"]["Row"];
 
+export type OutreachEmailRow = Database["public"]["Tables"]["outreach_emails"]["Row"];
+export type OutreachEmailInsert = Database["public"]["Tables"]["outreach_emails"]["Insert"];
 export type UserSettings = Database["public"]["Tables"]["user_settings"]["Row"];
 export type UserSettingsUpdate = Database["public"]["Tables"]["user_settings"]["Update"];
 
