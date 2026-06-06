@@ -6,12 +6,13 @@ import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
-import { LayoutDashboard, Users, PlusCircle, LogOut, Zap } from "lucide-react";
+import { LayoutDashboard, Users, PlusCircle, LogOut, Zap, BookUser, Settings } from "lucide-react";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/prospects", label: "Prospects", icon: Users },
+  { href: "/prospects", label: "Research", icon: Users },
   { href: "/prospects/new", label: "New Research", icon: PlusCircle },
+  { href: "/contacts", label: "Contacts", icon: BookUser },
 ];
 
 export function Sidebar() {
@@ -59,13 +60,25 @@ export function Sidebar() {
         })}
       </nav>
       <Separator className="my-4" />
-      <button
-        onClick={handleSignOut}
-        className="flex items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground text-left"
-      >
-        <LogOut className="size-4 shrink-0" />
-        Sign out
-      </button>
+      <div className="flex flex-col gap-0.5">
+        <Link
+          href="/settings"
+          className={cn(
+            "flex items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground",
+            pathname === "/settings" ? "bg-accent text-accent-foreground" : "text-muted-foreground"
+          )}
+        >
+          <Settings className="size-4 shrink-0" />
+          Settings
+        </Link>
+        <button
+          onClick={handleSignOut}
+          className="flex items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground text-left"
+        >
+          <LogOut className="size-4 shrink-0" />
+          Sign out
+        </button>
+      </div>
     </aside>
   );
 }

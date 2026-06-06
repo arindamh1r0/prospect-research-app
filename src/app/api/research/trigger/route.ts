@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { getUserSettings } from "@/lib/settings";
 
 const MOCK_SUMMARY = `## Company Overview
 
@@ -121,10 +122,17 @@ export async function POST(request: Request) {
   // Fire n8n webhook (non-blocking)
   const n8nWebhookUrl = process.env.N8N_WEBHOOK_URL;
   if (n8nWebhookUrl) {
+    const settings = await getUserSettings(user.id);
     fetch(n8nWebhookUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prospect_id: finalProspectId, company_name, division, region }),
+      body: JSON.stringify({
+        prospect_id: finalProspectId,
+        company_name,
+        division,
+        region,
+        ai_model: settings.research_model,
+      }),
     }).catch(() => {
       // n8n failure is non-fatal — research_results row stays "pending"
     });

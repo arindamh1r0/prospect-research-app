@@ -18,7 +18,7 @@ import {
   TrendingUp,
   Search,
   FileText,
-  Mail,
+  BookUser,
   BarChart3,
   RefreshCw,
   ArrowRight,
@@ -33,6 +33,7 @@ export default async function DashboardPage() {
     { count: completedCount },
     { count: pendingCount },
     { count: failedCount },
+    { count: contactCount },
   ] = await Promise.all([
     supabase.from("prospects").select("*", { count: "exact", head: true }),
     supabase
@@ -47,6 +48,7 @@ export default async function DashboardPage() {
       .from("research_results")
       .select("*", { count: "exact", head: true })
       .eq("status", "failed"),
+    supabase.from("contacts").select("*", { count: "exact", head: true }),
   ]);
 
   const totalResearch = (completedCount ?? 0) + (failedCount ?? 0);
@@ -84,17 +86,16 @@ export default async function DashboardPage() {
       iconClass: "text-violet-500",
       bgClass: "bg-violet-500/10",
     },
+    {
+      label: "Saved Contacts",
+      value: contactCount ?? 0,
+      icon: BookUser,
+      iconClass: "text-pink-500",
+      bgClass: "bg-pink-500/10",
+    },
   ];
 
   const comingSoonFeatures = [
-    {
-      icon: Mail,
-      iconClass: "text-emerald-500",
-      bgClass: "bg-emerald-500/10",
-      title: "Email Outreach",
-      description:
-        "Generate personalized outreach emails based on your prospect's research profile.",
-    },
     {
       icon: BarChart3,
       iconClass: "text-orange-500",
@@ -130,7 +131,7 @@ export default async function DashboardPage() {
           <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
             Overview
           </p>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
             {stats.map((stat) => (
               <Card key={stat.label} size="sm">
                 <CardHeader className="pb-0">
@@ -213,6 +214,35 @@ export default async function DashboardPage() {
               </CardFooter>
             </Card>
 
+            {/* Active: Contacts */}
+            <Card className="transition-all hover:ring-2 hover:ring-ring/40">
+              <CardHeader className="gap-2">
+                <div className="flex items-start justify-between">
+                  <div className="inline-flex items-center justify-center rounded-lg size-10 bg-pink-500/10">
+                    <BookUser className="size-5 text-pink-500" />
+                  </div>
+                  <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-0 font-medium">
+                    Active
+                  </Badge>
+                </div>
+                <CardTitle>Contacts</CardTitle>
+                <CardDescription>
+                  Save individual prospect profiles and generate personalized
+                  AI outreach emails with one click.
+                </CardDescription>
+              </CardHeader>
+              <CardFooter>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  render={<Link href="/contacts" />}
+                >
+                  View Contacts
+                  <ArrowRight className="size-3.5" />
+                </Button>
+              </CardFooter>
+            </Card>
+
             {/* Coming soon feature cards */}
             {comingSoonFeatures.map((feature) => (
               <Card key={feature.title} className="opacity-60">
@@ -245,6 +275,10 @@ export default async function DashboardPage() {
           </Button>
           <Button variant="outline" render={<Link href="/prospects" />}>
             View All Prospects
+          </Button>
+          <Button variant="outline" render={<Link href="/contacts" />}>
+            <BookUser className="size-4" />
+            View Contacts
           </Button>
         </section>
       </main>
